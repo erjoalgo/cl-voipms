@@ -49,8 +49,17 @@
                 (error "non-ok status: ~A" json)))))))
 
 (defmacro def-endpoint (name method params &key allowed-statuses)
+  "Define a function NAME which makes a request to the voip.ms api
+
+   with the given METHOD and query parameters.
+
+   ALLOWED-STATUSES
+   specifies a list of non-success statuses returned by the API
+   to be considered non-errors."
+
   `(defun ,name (auth &key ,@params)
-     "from-date to-date are in the format '2014-03-30'. see voipms api for details."
+     ,(format nil "voip.ms api call for ~A. Supports the query parameters: ~A."
+              method params)
      (request auth ,method
               (remove-if-not
                #'cdr
