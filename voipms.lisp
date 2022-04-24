@@ -9,7 +9,8 @@
            #:send-sms
            #:voipms-auth
            #:+local-time-timestring-format+
-           #:date-n-days-ago))
+           #:date-n-days-ago
+           #:make-voipms-auth))
 
 (defstruct voipms-auth username password)
 
