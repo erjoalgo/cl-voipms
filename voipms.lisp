@@ -91,4 +91,4 @@
   (local-time:format-timestring
    nil
    (local-time:timestamp- (local-time:now) days :day)
-   :format voipms:+local-time-timestring-format+))
+   :format +local-time-timestring-format+))
