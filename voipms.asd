@@ -1,5 +1,4 @@
-(asdf:defsystem
-    :statusor
+(asdf:defsystem :voipms
   :serial t
   :description "Common Lisp HTTP api client to the voip.ms api."
   :license "BSD"
