@@ -7,7 +7,7 @@
   (:export #:request
            #:get-sms
            #:send-sms
-           #:voipms-auth
+           #:make-voipms-auth
            #:+local-time-timestring-format+
            #:date-n-days-ago
            #:make-voipms-auth))
