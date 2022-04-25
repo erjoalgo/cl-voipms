@@ -1,16 +1,21 @@
+(in-package :cl)
+
 (defpackage voipms
   (:use :cl)
-  (:import-from #:erjoalgo-webutil
-                #:api-req
-                #:make-http-request
-                #:with-json-paths)
-  (:export #:request
-           #:get-sms
-           #:send-sms
-           #:make-voipms-auth
-           #:+local-time-timestring-format+
-           #:date-n-days-ago
-           #:make-voipms-auth))
+  (:import-from
+   :erjoalgo-webutil
+   :api-req
+   :make-http-request
+   :with-json-paths)
+  (:export
+   :request
+   :get-sms
+   :send-sms
+   :+local-time-timestring-format+
+   :date-n-days-ago
+   :make-voipms-auth))
+
+(in-package :voipms)
 
 (defstruct voipms-auth username password)
 
