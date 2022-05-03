@@ -171,6 +171,9 @@
    smpp_user
    smpp_pass))
 
+(def-endpoint send-mms "sendMMS"
+  (did dst message media1 media2 media3))
+
 (defun alist-get (key alist)
   (cdr (assoc key alist)))
 
