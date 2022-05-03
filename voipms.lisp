@@ -165,6 +165,7 @@
    sms_forward_enable
    sms_forward
    url_callback_enable
+   url_callback_retry
    url_callback
    smpp_enabled
    smpp_url
