@@ -52,7 +52,7 @@
             (if (or (equal status "success")
                     (member status allowed-statuses :test #'equal))
                 json
-                (error "non-ok status: ~A" json)))))))
+                (error (format nil "non-ok status: ~A" json))))))))
 
 (defmacro def-endpoint (name method params &key allowed-statuses)
   "Define a function NAME which makes a request to the voip.ms api
