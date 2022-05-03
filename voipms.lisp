@@ -83,6 +83,144 @@
 
 (def-endpoint send-sms "sendSMS" (did dst message))
 
+(def-endpoint get-rate-centers-usa "getRateCentersUSA" (state))
+
+(def-endpoint get-dids-usa "getDIDsUSA" (state ratecenter))
+
+(def-endpoint get-dids-info "getDIDsInfo" (client did))
+
+(def-endpoint order-did "orderDID"
+  (did
+   routing
+   failover_busy
+   failover_unreachable
+   failover_noanswer
+   voicemail
+   pop
+   dialtime
+   cnam
+   callerid_prefix
+   note
+   billing_type
+   account
+   monthly
+   setup
+   minute
+   test))
+
+(def-endpoint get-servers-info "getServersInfo" (server_pop))
+
+(def-endpoint get-sub-accounts "getSubAccounts" (account))
+
+(def-endpoint set-sub-account "setSubAccount"
+  (id
+   description
+   auth_type
+   password
+   ip
+   device_type
+   callerid_number
+   canada_routing
+   lock_international
+   international_route
+   music_on_hold
+   language
+   record_calls
+   allowed_codecs
+   dtmf_mode
+   nat
+   sip_traffic
+   max_expiry
+   rtp_timeout
+   rtp_hold_timeout
+   ip_restriction
+   enable_ip_restriction
+   pop_restriction
+   enable_pop_restriction
+   send_bye
+   internal_extension
+   internal_voicemail
+   internal_dialtime
+   reseller_client
+   reseller_package
+   reseller_nextbilling
+   reseller_chargesetup))
+
+(def-endpoint get-auth-types "getAuthTypes" ())
+(def-endpoint get-device-types "getDeviceTypes" ())
+(def-endpoint get-lock-international "getLockInternational" ())
+(def-endpoint get-routes "getRoutes" ())
+(def-endpoint get-music-on-holdp "getMusicOnHold" ())
+(def-endpoint get-allowed-codecs "getAllowedCodecs" ())
+(def-endpoint get-dtmf-modes "getDTMFModes" ())
+(def-endpoint get-nat "getNAT" ())
+(def-endpoint cancel-did "cancelDID" (did cancelcomment portout test))
+
+(def-endpoint set-sms "setSMS"
+  (did
+   enable
+   email_enabled
+   email_address
+   sms_forward_enable
+   sms_forward
+   url_callback_enable
+   url_callback
+   smpp_enabled
+   smpp_url
+   smpp_user
+   smpp_pass))
+
+(defun alist-get (key alist)
+  (cdr (assoc key alist)))
+
+(defun set-sub-account-sparse
+    (auth account-name &rest args &key
+                                    id description auth-type password ip device-type callerid-number
+                                    canada-routing lock-international international-route music-on-hold
+                                    language record-calls allowed-codecs dtmf-mode nat sip-traffic
+                                    max-expiry rtp-timeout rtp-hold-timeout ip-restriction
+                                    enable-ip-restriction pop-restriction enable-pop-restriction
+                                    send-bye internal-extension internal-voicemail internal-dialtime
+                                    reseller-client reseller-package reseller-nextbilling
+                                    reseller-chargesetup)
+  (declare (ignore description auth-type password ip device-type callerid-number
+                   canada-routing lock-international international-route music-on-hold
+                   language record-calls allowed-codecs dtmf-mode nat sip-traffic
+                   max-expiry rtp-timeout rtp-hold-timeout ip-restriction
+                   enable-ip-restriction pop-restriction enable-pop-restriction
+                   send-bye internal-extension internal-voicemail internal-dialtime
+                   reseller-client reseller-package reseller-nextbilling
+                   reseller-chargesetup))
+  (let* ((required-keys-remaining
+           '(:ID :AUTH-TYPE :DEVICE-TYPE :LOCK-INTERNATIONAL
+             :INTERNATIONAL-ROUTE :MUSIC-ON-HOLD :DTMF-MODE :NAT
+             :ALLOWED-CODECS :PASSWORD))
+         params
+         (map-key-fn (lambda (k)
+                       (intern (ppcre:regex-replace-all
+                                "-"
+                                (symbol-name k)
+                                "_") :KEYWORD))))
+    (loop for (k v) on args by #'cddr
+          do (progn (push (funcall map-key-fn k) params)
+                    (push v params))
+          do (setf required-keys-remaining
+                   (delete k required-keys-remaining)))
+    (when required-keys-remaining
+      (let ((account (car
+                      (alist-get :ACCOUNTS
+                                 (get-sub-accounts
+                                  auth :account
+                                  (or id account-name
+                                      (error "must provide account id or name")))))))
+        (loop for (k . v) in account
+              if (find k required-keys-remaining)
+                do (progn
+                     (push (funcall map-key-fn k) params)
+                     (push v params))))
+      (setf params (reverse params))
+      (apply #'voipms::set-sub-account auth params))))
+
 (defparameter +local-time-timestring-format+
   `((:YEAR 4) #\- (:MONTH 2)  #\- (:DAY 2) #\ (:HOUR 2) #\: (:MIN 2) #\: (:SEC 2))
   "The LOCAL-TIME::FORMAT-TIMESTRING format that the voip.ms API expects in
