@@ -154,6 +154,7 @@
 (def-endpoint get-allowed-codecs "getAllowedCodecs" ())
 (def-endpoint get-dtmf-modes "getDTMFModes" ())
 (def-endpoint get-nat "getNAT" ())
+(def-endpoint get-ring-groups "getRingGroups" (ring_group))
 (def-endpoint cancel-did "cancelDID" (did cancelcomment portout test))
 
 (def-endpoint set-sms "setSMS"
