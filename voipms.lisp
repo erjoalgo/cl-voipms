@@ -304,3 +304,13 @@
    nil
    (local-time:timestamp- (local-time:now) days :day)
    :format +local-time-timestring-format+))
+
+(defun current-did-for-account (account-name)
+  (let* ((account
+           (car
+            (voipms::alist-get
+             :ACCOUNTS (voipms::get-sub-accounts *auth* :account account-name))))
+         (did (voipms::alist-get :CALLERID-NUMBER account)))
+    (if (member did *fordbidden-phone-numbers* :test #'equal)
+        (error "Fordbidden phone number: ~A" did)
+        did)))
