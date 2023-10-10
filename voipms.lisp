@@ -337,3 +337,8 @@
                         :to (if received-p did contact)
                         :id id
                         :timestamp timestamp))))))
+
+(defun sanitize-phone-number (phone)
+  (multiple-value-bind (replaced)
+      (ppcre:regex-replace-all "[^0-9]" phone "")
+    replaced))
