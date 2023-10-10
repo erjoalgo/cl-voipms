@@ -159,6 +159,56 @@
    reseller_nextbilling
    reseller_chargesetup))
 
+(def-endpoint create-sub-account "createSubAccount"
+  (
+   ;; required
+   username ;;
+   protocol ;;
+   description
+   auth_type ;;
+   password ;;
+   device_type ;;
+   lock_international ;;
+   international_route ;;
+   music_on_hold ;;
+   dtmf_mode ;;
+   nat ;;
+
+   ;; optional
+
+   ip
+   callerid_number
+   canada_routing
+   allow225
+
+   language
+
+   record_calls
+   allowed_codecs
+   sip_traffic
+   max_expiry
+   rtp_timeout
+   rtp_hold_timeout
+   ip_restriction
+
+   enable_ip_restriction
+   pop_restriction
+
+   enable_pop_restriction
+   send_bye
+   transcribe
+   transcription_locale
+   transcription_email
+   internal_extension
+   internal_voicemail
+   internal_dialtime
+   reseller_client
+   reseller_package
+   reseller_nextbilling
+   reseller_chargesetup
+   parking_lot))
+
+
 (def-endpoint get-auth-types "getAuthTypes" ())
 (def-endpoint get-device-types "getDeviceTypes" ())
 (def-endpoint get-lock-international "getLockInternational" ())
