@@ -6,14 +6,23 @@
    :erjoalgo-webutil
    :api-req
    :make-http-request
-   :with-json-paths)
+   :with-json-paths
+   :json-get-nested
+   :->)
   (:export
    :request
    :get-sms
    :send-sms
    :+local-time-timestring-format+
    :date-n-days-ago
-   :make-voipms-auth))
+   :make-voipms-auth
+   :*auth*
+   :*fordbidden-phone-numbers*
+   :init-auth-from-env
+   :sanitize-phone-number
+   :get-sms-messages
+   :current-did-for-account
+   :get-dids-info))
 
 (in-package :voipms)
 
