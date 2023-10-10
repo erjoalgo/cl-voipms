@@ -4,6 +4,7 @@
   :license "BSD"
   :author "Ernesto Alfonso <erjoalgo@gmail.com>"
   :depends-on (:erjoalgo-webutil
-               :local-time)
+               :local-time
+               :cl-date-time-parser)
   :components
   ((:file "voipms")))
