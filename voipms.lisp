@@ -23,6 +23,17 @@
 
 (defparameter base-url "https://voip.ms/")
 
+(defparameter *auth* nil)
+(defparameter *fordbidden-phone-numbers* nil)
+
+(defun init-auth-from-env ()
+  (let ((url (sb-posix:getenv "VOIPMS_AUTH")))
+    (setf VOIPMS:*AUTH*
+          (ppcre:register-groups-bind (user password)
+              ("([^:]+):(.*)" url)
+            (VOIPMS:MAKE-VOIPMS-AUTH :username user
+                                     :password password)))))
+
 (defun request (auth method &optional qparams no-error allowed-statuses)
   "Makes an HTTP request to the voip.ms API.
 
