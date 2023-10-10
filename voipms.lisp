@@ -314,3 +314,26 @@
     (if (member did *fordbidden-phone-numbers* :test #'equal)
         (error "Fordbidden phone number: ~A" did)
         did)))
+
+(defun get-sms-messages (phone &key (max-days-ago 10))
+  (let ((sms-messages
+          (json-get-nested
+           (get-sms *auth*
+                    :contact phone
+                    :from (voipms:date-n-days-ago max-days-ago))
+           "sms")))
+    (loop for sms in sms-messages
+          collect
+          (with-json-paths sms
+              (message type did contact id date)
+            (let ((received-p (= (parse-integer type) 1))
+                  (timestamp (->
+                              date
+                              cl-date-time-parser:parse-date-time
+                              local-time:universal-to-timestamp
+                              local-time:timestamp-to-unix)))
+              (make-sms :message message
+                        :from (if received-p contact did)
+                        :to (if received-p did contact)
+                        :id id
+                        :timestamp timestamp))))))
