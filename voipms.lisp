@@ -17,7 +17,7 @@
 
 (in-package :voipms)
 
-(defstruct voipms-auth username password)
+(defstruct voipms-auth username password hostname url)
 
 (defparameter base-url "https://voip.ms/")
 
