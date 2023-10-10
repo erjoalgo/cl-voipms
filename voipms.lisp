@@ -19,6 +19,8 @@
 
 (defstruct voipms-auth username password)
 
+(defstruct sms message from to timestamp id)
+
 (defparameter base-url "https://voip.ms/")
 
 (defun request (auth method &optional qparams no-error allowed-statuses)
