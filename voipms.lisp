@@ -32,7 +32,9 @@
 
 (defparameter base-url "https://voip.ms/")
 
-(defparameter *auth* nil)
+(unless (boundp '*auth*)
+  (defparameter *auth* nil))
+
 (defparameter *fordbidden-phone-numbers* nil)
 
 (defun init-auth-from-env ()
