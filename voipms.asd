@@ -5,6 +5,7 @@
   :author "Ernesto Alfonso <erjoalgo@gmail.com>"
   :depends-on (:erjoalgo-webutil
                :local-time
-               :cl-date-time-parser)
+               :cl-date-time-parser
+               :vom)
   :components
   ((:file "voipms")))
