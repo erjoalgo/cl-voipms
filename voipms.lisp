@@ -338,7 +338,8 @@
         as batch = (get-sms-messages-helper phone :max-days-ago ago)
         do (vom:info "got ~A messages in the batch starting at ~D days ago~%"
                      (length batch) ago)
-        do (decf ago +max-date-range-days+)))
+        do (decf ago +max-date-range-days+)
+        nconc batch))
 
 (defun get-sms-messages-helper (phone &key (max-days-ago +max-date-range-days+))
   (let* ((from (voipms:date-n-days-ago max-days-ago))
