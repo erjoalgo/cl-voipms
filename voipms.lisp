@@ -37,13 +37,16 @@
 
 (defparameter *fordbidden-phone-numbers* nil)
 
+(defun init-auth-from-string (string)
+  "string is a colon-delimited username:password"
+  (setf VOIPMS:*AUTH*
+        (ppcre:register-groups-bind (user password)
+            ("([^:]+):(.*)" string)
+          (VOIPMS:MAKE-VOIPMS-AUTH :username user
+                                   :password password))))
 (defun init-auth-from-env ()
-  (let ((url (sb-posix:getenv "VOIPMS_AUTH")))
-    (setf VOIPMS:*AUTH*
-          (ppcre:register-groups-bind (user password)
-              ("([^:]+):(.*)" url)
-            (VOIPMS:MAKE-VOIPMS-AUTH :username user
-                                     :password password)))))
+  (let ((auth-string (sb-posix:getenv "VOIPMS_AUTH")))
+    (init-auth-from-string auth-string)))
 
 (defun request (auth method &optional qparams no-error allowed-statuses)
   "Makes an HTTP request to the voip.ms API.
