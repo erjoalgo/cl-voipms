@@ -329,13 +329,28 @@
         (error "Fordbidden phone number: ~A" did)
         did)))
 
-(defun get-sms-messages (phone &key (max-days-ago 10))
-  (let ((sms-messages
-          (json-get-nested
-           (get-sms *auth*
-                    :contact phone
-                    :from (voipms:date-n-days-ago max-days-ago))
-           "sms")))
+(defvar +max-date-range-days+ 91)
+
+(defun get-sms-messages (phone &key (max-days-ago +max-date-range-days+))
+  (loop with ago = max-days-ago
+        with messages = nil
+        while (>= ago 0)
+        as batch = (get-sms-messages-helper phone :max-days-ago ago)
+        do (vom:info "got ~A messages in the batch starting at ~D days ago~%"
+                     (length batch) ago)
+        do (decf ago +max-date-range-days+)))
+
+(defun get-sms-messages-helper (phone &key (max-days-ago +max-date-range-days+))
+  (let* ((from (voipms:date-n-days-ago max-days-ago))
+         (to (when (> max-days-ago +max-date-range-days+)
+               (voipms:date-n-days-ago (- max-days-ago +max-date-range-days+))))
+         (sms-messages
+           (json-get-nested
+            (get-sms *auth*
+                     :contact phone
+                     :from from
+                     :to to)
+            "sms")))
     (loop for sms in sms-messages
           collect
           (with-json-paths sms
