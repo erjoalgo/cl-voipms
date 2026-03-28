@@ -28,7 +28,7 @@
 
 (defstruct voipms-auth username password)
 
-(defstruct sms message from to timestamp id)
+(defstruct sms message from to timestamp id did contact)
 
 (defparameter base-url "https://voip.ms/")
 
@@ -366,7 +366,9 @@
                         :from (if received-p contact did)
                         :to (if received-p did contact)
                         :id id
-                        :timestamp timestamp))))))
+                        :timestamp timestamp
+                        :did did
+                        :contact contact))))))
 
 (defun sanitize-phone-number (phone)
   (multiple-value-bind (replaced)
