@@ -392,3 +392,18 @@
               do (decf ago +max-date-range-days+)
               nconc batch)))
 
+
+(defun get-conversations (&key did
+                            (max-days-ago +max-date-range-days+))
+  (setf max-days-ago (or max-days-ago +max-date-range-days+))
+  (loop
+    with sorted = (let ((messages
+                          (voipms::get-sms-messages :did did :max-days-ago max-days-ago)))
+                    (sort messages #'> :key #'sms-timestamp))
+    with seen = nil
+    for sms in sorted
+    as contact = (sms-contact sms)
+    if (not (member contact seen :test #'equal))
+      collect (progn
+                (push contact seen)
+                sms)))
