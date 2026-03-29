@@ -331,24 +331,19 @@
 
 (defvar +max-date-range-days+ 91)
 
-(defun get-sms-messages (phone &key (max-days-ago +max-date-range-days+))
-  (loop with ago = max-days-ago
-        with messages = nil
-        while (>= ago 0)
-        as batch = (get-sms-messages-helper phone :max-days-ago ago)
-        do (vom:info "got ~A messages in the batch starting at ~D days ago~%"
-                     (length batch) ago)
-        do (decf ago +max-date-range-days+)
-        nconc batch))
-
-(defun get-sms-messages-helper (phone &key (max-days-ago +max-date-range-days+))
-  (let* ((from (voipms:date-n-days-ago max-days-ago))
+(defun get-sms-messages-helper (&key
+                                  contact
+                                  did
+                                  (max-days-ago +max-date-range-days+))
+  (let* ((max-days-ago (or max-days-ago +max-date-range-days+))
+         (from (voipms:date-n-days-ago max-days-ago))
          (to (when (> max-days-ago +max-date-range-days+)
                (voipms:date-n-days-ago (- max-days-ago +max-date-range-days+))))
          (sms-messages
            (json-get-nested
             (get-sms *auth*
-                     :contact phone
+                     :contact contact
+                     :did did
                      :from from
                      :to to)
             "sms")))
@@ -374,3 +369,26 @@
   (multiple-value-bind (replaced)
       (ppcre:regex-replace-all "[^0-9]" phone "")
     replaced))
+
+
+(defun get-dids ()
+  (mapcar (lambda (did) (alist-get :DID did))
+          (alist-get :DIDS (get-dids-info *auth*))))
+
+(defun get-sms-messages (&key contact did
+                           (max-days-ago +max-date-range-days+))
+  (setf max-days-ago (or max-days-ago +max-date-range-days+))
+  (loop with dids = (if did (list did) (get-dids))
+        for did in dids
+        append
+        (loop with ago = max-days-ago
+              while (>= ago 0)
+              as batch = (get-sms-messages-helper
+                          :contact contact
+                          :did did
+                          :max-days-ago ago)
+              do (vom:info "got ~A messages for did ~A in the batch starting at ~D days ago~%"
+                           (length batch) did ago)
+              do (decf ago +max-date-range-days+)
+              nconc batch)))
+
